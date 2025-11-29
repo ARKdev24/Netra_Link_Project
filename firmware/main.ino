@@ -2,13 +2,13 @@
 #include <WiFiClient.h>
 #include <HTTPClient.h>
 #include <Wire.h>
-//#include <LiquidCrystal_I2C.h>
+#include <LiquidCrystal_I2C.h>
 
 // ------------ Pin Definitions ------------
 #define IR_PIN 15         // IR sensor output connected to digital pin 2
 int devicePin[3] = {18, 23, 19};
 
-//LiquidCrystal_I2C lcd(0x27, 16, 2);  // (I2C address, columns, rows)
+LiquidCrystal_I2C lcd(0x27, 16, 2);  // (I2C address, columns, rows)
 
 // --------------PushBullet Credentials-----------
 const char* token = "o.hKuX2oErevtNMYwygabluMGOEIZj0n3G";  // Pushbullet API token
@@ -35,7 +35,7 @@ int devicecode = 0;
 void push_SOS(String message) {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
-    //digitalWrite(Wifiled,HIGH);
+    digitalWrite(Wifiled,HIGH);
     http.begin("https://api.pushbullet.com/v2/pushes");
     http.addHeader("Content-Type", "application/json");
     http.addHeader("Access-Token", token);
@@ -68,14 +68,14 @@ void push_SOS(String message) {
 // ------------ Setup Function ------------
 void setup() {
   Serial.begin(9600);            // Start serial communication
- // lcd.init();           // initialize the LCD
- // lcd.backlight();       // turn on backlight
+ lcd.init();           // initialize the LCD
+ lcd.backlight();       // turn on backlight
   pinMode(IR_PIN, INPUT);        // Set IR pin as input
   pinMode(devicePin[0], OUTPUT);      // Set LED pin as output
   pinMode(devicePin[1], OUTPUT);     // Set relay pin as output
   pinMode(devicePin[2], OUTPUT);
   WiFi.begin(ssid, pass);
-  //  pinMode(Wifiled, OUTPUT);
+  pinMode(Wifiled, OUTPUT);
   Serial.print("Connecting to WiFi");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -225,7 +225,7 @@ void loop()
     }
      if(irState == HIGH) {
       push_SOS("User seems okay");
-      //break;
+      break;
     } else {
       push_SOS("🚨 ALERT!!!! Please return home asap");
       unconFlag = true;
